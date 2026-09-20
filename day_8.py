@@ -1,143 +1,113 @@
 # Day 8
 
 
-# Problem 27
-customers = [
-    {"id": 101, "name": "Rahul", "email": "rahul@example.com"},
-    {"id": 102, "name": "Priya", "email": "priya@example.com"},
-    {"id": 101, "name": "Rahul", "email": "rahul@example.com"},
-    {"id": 103, "name": "Aman", "email": "aman@example.com"},
-    {"id": 102, "name": "Priya2", "email": "priya@example.com"},
+# Problem 24
+class TaskManager:
+  def __init__(self):
+    self.completed = False
+    self.tasks = {}
+    
+  def add_task(self, title, priority):
+    if title not in self.tasks:
+      self.tasks[title] = {"priority": priority, "completed": self.completed}
+      print(f"- Task added: {title}")
+      return
+    print("Task already in list!")
+  
+  def remove_task(self, title):
+    if title in self.tasks:
+      del self.tasks[title]
+      print(f"- Task removed: {title}")
+      return
+    print("No such task!")
+  
+  def complete_task(self, title):
+    if title in self.tasks:
+      (self.tasks[title])["completed"] = True
+      return
+    print("No such task!")
+  
+  def get_pending_tasks(self):
+    pending_tasks = {}
+    for task in self.tasks:
+      if (self.tasks[task])["completed"] == False:
+        pending_tasks[task] = self.tasks[task]
+    return pending_tasks
+  
+  def display_tasks(self):
+    pprint(self.tasks)
+
+manager = TaskManager()
+
+manager.add_task("Finish Python practice", "high")
+manager.add_task("Read ML article", "medium")
+manager.add_task("Clean downloads folder", "low")
+print("\n")
+manager.complete_task("Clean downloads folder")
+manager.get_pending_tasks()
+print("\n")
+manager.display_tasks()
+
+print("\n------------------------------------------------------------------- \n")
+
+# Problem 25
+activities = [
+    {"user": "Rahul", "action": "login"},
+    {"user": "Aman", "action": "login"},
+    {"user": "Rahul", "action": "purchase"},
+    {"user": "Rahul", "action": "logout"},
+    {"user": "Aman", "action": "purchase"},
+    {"user": "Priya", "action": "login"},
 ]
 
-def customers_cleanup(customers):
-  customer_ids = {}
-  for customer in customers:
-    if "#id" + str(customer["id"]) not in customer_ids:
-      customer_ids["#id" + str(customer["id"])] = {"name": customer["name"], "email": customer["email"]}
-  return customer_ids
+def summarize_activity(activities):
+  activity_summary = {}
+  for activity in activities:
+    user_action = activity["action"]
+    if activity["user"] not in activity_summary:
+      user_data = {"login": 0, "purchase": 0, "logout": 0}
+      activity_summary[activity["user"]] = user_data
+      (activity_summary[activity["user"]])[user_action] += 1
+    else:
+      (activity_summary[activity["user"]])[user_action] += 1
+  return activity_summary
 
-print("Customer IDs: ")
-pprint(customers_cleanup(customers))
+print("Activity Summary: ")
+pprint(summarize_activity(activities))
 
 print("\n------------------------------------------------------------------- \n")
 
 
-# Problem 28
-sales = [
-    {"product": "Laptop", "category": "Electronics", "quantity": 2, "price": 50000},
-    {"product": "Mouse", "category": "Electronics", "quantity": 5, "price": 800},
-    {"product": "Chair", "category": "Furniture", "quantity": 3, "price": 4500},
-    {"product": "Laptop", "category": "Electronics", "quantity": 1, "price": 50000},
-    {"product": "Desk", "category": "Furniture", "quantity": 2, "price": 7000},
-    {"product": "Mouse", "category": "Electronics", "quantity": 2, "price": 800},
-]
-
-def sales_report(sales):
-  report = {
-    "total_revenue": 0,
-    "total_quantity": 0,
-    "revenue_by_product": {},
-    "revenue_by_category": {}
+# Problem 26
+stock = {
+  "laptop": 10,
+  "mouse": 25,
+  "keyboard": 15,
+  "headphones": 8
 }
-  for sale in sales:
-    report["total_revenue"] += sale["quantity"] * sale["price"]
-    report["total_quantity"] += sale["quantity"]
-    if (sale["product"] not in report["revenue_by_product"]):
-      (report["revenue_by_product"])[sale["product"]] = sale["quantity"] * sale["price"]
-    else:
-      (report["revenue_by_product"])[sale["product"]] += sale["quantity"] * sale["price"]
-    if sale["category"] not in report["revenue_by_category"]:
-      (report["revenue_by_category"])[sale["category"]] = sale["quantity"] * sale["price"]
-    else:
-      (report["revenue_by_category"])[sale["category"]] += sale["quantity"] * sale["price"]
-  return report
 
-print(sales_report(sales))
-
-print("\n------------------------------------------------------------------- \n")
-
-
-# Problem 29
-orders = [
-    {"customer": "Rahul", "product": "Laptop", "quantity": 1, "price": 50000},
-    {"customer": "Priya", "product": "Mouse", "quantity": 2, "price": 800},
-    {"customer": "Rahul", "product": "Keyboard", "quantity": 1, "price": 2000},
-    {"customer": "Aman", "product": "Laptop", "quantity": 2, "price": 50000},
-    {"customer": "Priya", "product": "Keyboard", "quantity": 1, "price": 2000},
-    {"customer": "Rahul", "product": "Mouse", "quantity": 3, "price": 800},
+updates = [
+  {"item": "laptop", "change": -2},
+  {"item": "mouse", "change": 5},
+  {"item": "keyboard", "change": -15},
+  {"item": "webcam", "change": 6},
 ]
 
-def customer_order_summary(orders):
-  order_summary = {}
-  for order in orders:
-    if order["customer"] not in order_summary:
-      order_summary[order["customer"]] = {"total_spent": order["price"]*order["quantity"], "total_items": order["quantity"], "orders": 1}
+def update_inventory(stock, updates):
+  updated_stock = stock.copy()
+  for update in updates:
+    if update["item"] in updated_stock:
+      if updated_stock[update["item"]] + update["change"] >= 0:
+        updated_stock[update["item"]] += update["change"]
+      else:
+        print(f"Invalid update: {(update['item']).capitalize()} would have negative stock.")
     else:
-      (order_summary[order["customer"]])["total_spent"] += order["price"]*order["quantity"]
-      (order_summary[order["customer"]])["total_items"] += order["quantity"]
-      (order_summary[order["customer"]])["orders"] += 1
-  return order_summary
+      if update["change"] > 0:
+        updated_stock[update["item"]] = update["change"]
+      else:
+        print(f"Invalid update: {(update['item']).capitalize()} has negative or no stock.")
+  return updated_stock
 
-pprint(customer_order_summary(orders))
-
-print("\n------------------------------------------------------------------- \n")
-
-
-# Problem 30
-students = [
-    {"name": "Rahul", "subject": "Math", "marks": 85},
-    {"name": "Priya", "subject": "Math", "marks": 92},
-    {"name": "Rahul", "subject": "Science", "marks": 78},
-    {"name": "Aman", "subject": "Math", "marks": 64},
-    {"name": "Priya", "subject": "Science", "marks": 88},
-    {"name": "Rahul", "subject": "English", "marks": 91},
-    {"name": "Aman", "subject": "Science", "marks": 72},
-]
-
-def performance_report(students):
-  report = {
-  "average_by_student": {},
-  "average_by_subject": {},
-  "top_student": None
-}
-  marks_entries = {}
-  subject_entries = {}
-  for student in students:
-    # Preparing marks_entries
-    if student["name"] not in marks_entries:
-      # Setting values to the student name in marks_entries if the student does not yet exist in marks_entries
-      marks_entries[student["name"]] = {"marks": student["marks"], "entries": 1}
-    else:
-      # Adding to the values of the student name in marks_entries if the student already exists in marks_entries
-      (marks_entries[student["name"]])["marks"] += student["marks"]
-      (marks_entries[student["name"]])["entries"] += 1
-  for student in students:
-    # Determining the values of average_by_students in report
-    average = round(((marks_entries[student["name"]])["marks"]) / ((marks_entries[student["name"]])["entries"]), 2)
-    (report["average_by_student"])[student["name"]] = average
-  for student in students:
-    # Preparing subject_entries
-    if student["subject"] not in subject_entries:
-      # Setting values to the student name in subject_entries if the student does not yet exist in subject_entries
-      subject_entries[student["subject"]] = {"marks": student["marks"], "entries": 1}
-    else:
-      # Adding to the values of the student name in subject_entries if the student already exists in subject_entries
-      (subject_entries[student["subject"]])["marks"] += student["marks"]
-      (subject_entries[student["subject"]])["entries"] += 1
-  for student in students:
-    # Determining the values of average_by_subjects in report
-    average = round(((subject_entries[student["subject"]])["marks"]) / ((subject_entries[student["subject"]])["entries"]), 2)
-    (report["average_by_subject"])[student["subject"]] = average
-  # Determining top_student in report
-  if report["average_by_student"]:
-    data = report["average_by_student"]
-    highest_average = max((data).values())
-    report["top_student"] = [student for student, marks in data.items() if marks == highest_average]
-  else:
-    pass
-  return report
-
-pprint(performance_report(students))
+print(f"Updated Stock: {update_inventory(stock, updates)}")
 
 print("\n------------------------------------------------------------------- \n")
