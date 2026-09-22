@@ -106,15 +106,16 @@ def sales_leaderboard(sales):
   if sales:
     leaderboard = {
       "employees": {},
-      "highest_sales": 0
+      "top_sales": 0
     }
-    employee_sales = sorted([], reverse=True)
+    employee_sales = []
     sales_dict = {}
     
     for sale in sales:
       employee_sales.append(sale["sales"])
     
-    leaderboard["highest_sales"] += employee_sales[0]
+    employee_sales = sorted(employee_sales, reverse=True)
+    leaderboard["top_sales"] += employee_sales[0]
   
     index = 1
     
@@ -122,7 +123,6 @@ def sales_leaderboard(sales):
       if sale not in sales_dict:
         sales_dict[sale] = index
         index += 1
-        
     
     for sale in sales:
       (leaderboard["employees"])[sale["employee"]] = {"sales": sale["sales"], "rank": sales_dict[sale["sales"]]}
@@ -131,7 +131,7 @@ def sales_leaderboard(sales):
   else:
     return {
       "employees": {},
-      "highest_sales": 0
+      "top_sales": 0
     }
 
 pprint(sales_leaderboard(sales), sort_dicts=False)
